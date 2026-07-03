@@ -916,8 +916,24 @@ s32 act_steep_jump(struct MarioState *m) {
 }
 
 s32 act_ground_pound(struct MarioState *m) {
-    u32 stepResult;
+    u32 stepResult = AIR_STEP_NONE;
     f32 yOffset;
+
+    if (m->actionTimer == 0 && m->actionState == 0) {
+        if (m->input & INPUT_Z_DOWN) {
+            m->actionArg = 2;
+        }
+    } 
+    
+    if (m->actionState == 0 && m->actionTimer < 4) {
+        if (!(m->input & INPUT_Z_DOWN)) {
+            m->actionArg = 0;
+        }
+    }
+
+    if (m->actionArg == 2) {
+        stepResult = perform_air_step(m, 0);
+    }
 
     play_sound_if_no_flag(m, SOUND_ACTION_THROW, MARIO_ACTION_SOUND_PLAYED);
 
@@ -931,24 +947,36 @@ s32 act_ground_pound(struct MarioState *m) {
             }
         }
 
-        m->vel[1] = -50.0f;
+
         mario_set_forward_vel(m, 0.0f);
 
-        set_mario_animation(m, m->actionArg == 0 ? MARIO_ANIM_START_GROUND_POUND
+        set_mario_animation(m, (m->actionArg & 1) == 0 ? MARIO_ANIM_START_GROUND_POUND
                                                  : MARIO_ANIM_TRIPLE_JUMP_GROUND_POUND);
         if (m->actionTimer == 0) {
             play_sound(SOUND_ACTION_SPIN, m->marioObj->header.gfx.cameraToObject);
+                if (m->actionArg == 2) {
+                    m->vel[1] = 0.0f; // Beta behavior sets velocity to 0 on frame 1
+            }
+        }
+
+        if (m->actionArg != 2) {
+            m->vel[1] = -50.0f;
         }
 
         m->actionTimer++;
-        if (m->actionTimer >= m->marioObj->header.gfx.animInfo.curAnim->loopEnd + 4) {
+        if (m->actionTimer >= m->marioObj->header.gfx.animInfo.curAnim->loopEnd + (m->actionArg == 2 ? 0 : 4)) {
+                if (m->actionArg != 2) {
             play_sound(SOUND_MARIO_GROUND_POUND_WAH, m->marioObj->header.gfx.cameraToObject);
+                }
             m->actionState = 1;
         }
     } else {
         set_mario_animation(m, MARIO_ANIM_GROUND_POUND);
 
+        if (m->actionArg != 2) {
         stepResult = perform_air_step(m, 0);
+        }
+
         if (stepResult == AIR_STEP_LANDED) {
             if (should_get_stuck_in_ground(m)) {
 #if ENABLE_RUMBLE
@@ -964,7 +992,7 @@ s32 act_ground_pound(struct MarioState *m) {
             } else {
                 play_mario_heavy_landing_sound(m, SOUND_ACTION_TERRAIN_HEAVY_LANDING);
                 if (!check_fall_damage(m, ACT_HARD_BACKWARD_GROUND_KB)) {
-                    m->particleFlags |= PARTICLE_MIST_CIRCLE | PARTICLE_HORIZONTAL_STAR;
+                    m->particleFlags |= (m->actionArg == 2) ? PARTICLE_MIST_CIRCLE : (PARTICLE_MIST_CIRCLE | PARTICLE_HORIZONTAL_STAR);
                     set_mario_action(m, ACT_GROUND_POUND_LAND, 0);
                 }
             }
