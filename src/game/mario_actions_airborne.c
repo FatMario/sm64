@@ -925,7 +925,7 @@ s32 act_ground_pound(struct MarioState *m) {
         }
     } 
     
-    if (m->actionState == 0 && m->actionTimer < 4) {
+    if (m->actionState == 0 && m->actionTimer < 5) {
         if (!(m->input & INPUT_Z_DOWN)) {
             m->actionArg = 0;
         }
