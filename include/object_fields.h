@@ -1161,4 +1161,8 @@
 #define /*0x0FC*/ oYoshiChosenHome OBJECT_FIELD_S32(0x1D)
 #define /*0x100*/ oYoshiTargetYaw  OBJECT_FIELD_S32(0x1E)
 
+/*Flying Carpet */
+#define /*0x0F4*/ oCarpetBoostSpeed OBJECT_FIELD_F32(0x47)
+#define /*0x0F8*/ oCarpetBoostLatch OBJECT_FIELD_S32(0x48)
+
 #endif // OBJECT_FIELDS_H

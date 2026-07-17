@@ -85,6 +85,11 @@ void bhv_platform_on_track_init(void) {
 static void platform_on_track_act_init(void) {
     s32 i;
 
+    if (o->oPlatformOnTrackType == PLATFORM_ON_TRACK_TYPE_CARPET) {
+        o->oCarpetBoostSpeed = 0.0f;
+        o->oCarpetBoostLatch = 0;
+    }
+
     o->oPlatformOnTrackPrevWaypoint = o->oPlatformOnTrackStartWaypoint;
     o->oPlatformOnTrackPrevWaypointFlags = 0;
     o->oPlatformOnTrackBaseBallIndex = 0;
@@ -162,9 +167,18 @@ static void platform_on_track_act_move_along_track(void) {
             // The ski lift accelerates, while the others instantly start
             if (!o->oPlatformOnTrackIsNotSkiLift) {
                 obj_forward_vel_approach(10.0, 0.1f);
-            } else {
+        } else {
                 o->oForwardVel = 10.0f;
+
+            if (o->oPlatformOnTrackType == PLATFORM_ON_TRACK_TYPE_CARPET) {
+                o->oForwardVel += o->oCarpetBoostSpeed;
+                
+                if (o->oForwardVel > 22.0f) {
+                    o->oForwardVel = 22.0f;
+                }
             }
+        }
+
 
             // Spawn a new track ball if necessary
             if (approach_f32_ptr(&o->oPlatformOnTrackDistMovedSinceLastBall, 300.0f, o->oForwardVel)) {
@@ -301,8 +315,22 @@ void bhv_platform_on_track_update(void) {
 
         approach_f32_ptr(&o->oPlatformOnTrackOffsetY, 0.0f, 0.5f);
         o->oPosY += o->oPlatformOnTrackOffsetY;
+
+         if (gMarioObject->platform == o) {
+            if (gMarioStates[0].action == ACT_GROUND_POUND_LAND) {
+                if (o->oCarpetBoostLatch != 1) { 
+                    o->oCarpetBoostSpeed += 4.0f; 
+                    o->oCarpetBoostLatch = 1;
+                }
+            }
+        }
+
+        if (gMarioStates[0].action != ACT_GROUND_POUND_LAND) {
+            o->oCarpetBoostLatch = 0;
+        }
     }
 }
+
 
 /**
  * Update function for bhvTrackBall.
