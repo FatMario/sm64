@@ -80,6 +80,19 @@ void bhv_mr_i_body_loop(void) {
     }
 }
 
+static void check_mr_i_trip_kick(void) {
+if (o->oDistanceToMario < 200.0f) {
+    if (gMarioStates[0].action == ACT_PUNCHING && gMarioStates[0].actionArg == 9) {
+            o->oMrIUnk100 = 1;
+            o->oAction = 3;
+            spawn_object(o, MODEL_NONE, bhvTriangleParticleSpawner);
+            play_sound(SOUND_ACTION_HIT_2, gMarioObject->header.gfx.cameraToObject);
+            set_camera_shake_from_hit(SHAKE_ATTACK);
+            mario_set_forward_vel(&gMarioStates[0], -48.0f); 
+        }
+    }
+}
+
 void mr_i_act_3(void) {
     s16 sp36;
     s16 sp34;
@@ -225,6 +238,7 @@ void mr_i_act_2(void) {
     if (o->oDistanceToMario > 800.0f) {
         o->oAction = 1;
     }
+    check_mr_i_trip_kick();
 }
 
 void mr_i_act_1(void) {
@@ -264,6 +278,7 @@ void mr_i_act_1(void) {
         o->oMrIUnk108 = random_float() * 80.0f;
         spawn_mr_i_particle();
     }
+    check_mr_i_trip_kick();
 }
 
 void mr_i_act_0(void) {
@@ -293,7 +308,7 @@ void (*sMrIActions[])(void) = {
 };
 
 struct ObjectHitbox sMrIHitbox = {
-    /* interactType:      */ INTERACT_DAMAGE,
+    /* interactType:      */ INTERACT_BOUNCE_TOP,
     /* downOffset:        */ 0,
     /* damageOrCoinValue: */ 2,
     /* health:            */ 2,
