@@ -1,5 +1,5 @@
 // mr_blizzard.inc.c
-
+#define MR_BLIZZARD_ACT_TRIP_KICK_DORMANT 6
 // Mr. Blizzard hitbox
 struct ObjectHitbox sMrBlizzardHitbox = {
     /* interactType:      */ INTERACT_MR_BLIZZARD,
@@ -232,7 +232,7 @@ static void mr_blizzard_act_death(void) {
     // After 30 frames, play the defeat sound once and scale Mr. Blizzard down to 0
     // at .03 units per frame. Spawn coins and set the coins to not respawn.
     if (o->oTimer >= 30) {
-        if (o->oTimer == 30) {
+        if (o->oTimer == 30 && o->oBlizzardHitTimer == 0) {
             cur_obj_play_sound_2(SOUND_OBJ_ENEMY_DEFEAT_SHRINK);
         }
 
@@ -334,6 +334,76 @@ static void mr_blizzard_act_jump(void) {
     }
 }
 
+static void check_mr_blizzard_trip_kick(void) {
+if (o->oDistanceToMario < 200.0f && o->oBlizzardHitTimer == 0 ) {
+    if (gMarioStates[0].action == ACT_PUNCHING && gMarioStates[0].actionArg == 9) {
+            if (o->oAnimState != 0) {
+                struct Object *cap;
+                save_file_clear_flags(SAVE_FLAG_CAP_ON_MR_BLIZZARD);
+                cap = spawn_object_relative(0, 5, 105, 0, o, MODEL_MARIOS_CAP, bhvNormalCap);
+                if (cap != NULL) {
+                    cap->oMoveAngleYaw = o->oFaceAngleYaw + (o->oFaceAngleRoll < 0 ? 0x4000 : -0x4000);
+                    cap->oForwardVel = 10.0f;
+                }
+                o->oAnimState = 0;
+            }            
+
+            o->oForwardVel = -30.0f;                           
+            o->oBlizzardHitVelY  = 25.0;
+            o->oMrBlizzardGraphYOffset = 24.0f;
+            o->oBlizzardHitTimer = 1;
+            cur_obj_become_intangible();
+            spawn_object(o, MODEL_NONE, bhvTriangleParticleSpawner);
+            play_sound(SOUND_ACTION_HIT_2, gMarioObject->header.gfx.cameraToObject);
+            set_camera_shake_from_hit(SHAKE_ATTACK);
+            mario_set_forward_vel(&gMarioStates[0], -48.0f);
+            return;
+        }
+    }
+        if (o->oBlizzardHitTimer > 0 && o->oBlizzardHitTimer < 4) {
+            cur_obj_move_using_vel_and_gravity();
+            o->oBlizzardHitTimer++;
+            if (o->oBlizzardHitTimer ==4) {      
+                cur_obj_hide();
+            if (o->oMrBlizzardHeldObj != NULL) {
+                obj_mark_for_deletion(o->oMrBlizzardHeldObj);
+            }
+            if (o->prevObj != NULL) {
+                obj_mark_for_deletion(o->prevObj);
+            }
+            o->prevObj = o->oMrBlizzardHeldObj = NULL;
+            spawn_mist_particles_variable(20, 0, 330.0f);
+            if (!(o->oBhvParams & 0x0000FF00)) {
+                obj_spawn_loot_yellow_coins(o, o->oNumLootCoins, 20.0f);
+                set_object_respawn_info_bits(o, 1);
+            }
+            o->oAction = MR_BLIZZARD_ACT_TRIP_KICK_DORMANT;
+
+            o->oForwardVel = 0.0f;
+            o->oVelY = 0.0f;
+            cur_obj_set_pos_to_home();
+
+
+                }
+            }
+        
+        if (o->oBlizzardHitTimer == 4) {
+            if (o->oDistanceToMario > 1000.0f) {
+            cur_obj_init_animation_with_sound(1);
+            o->oAction = MR_BLIZZARD_ACT_SPAWN_SNOWBALL;
+            o->oMrBlizzardScale = 1.0f;          
+            o->oMrBlizzardGraphYOffset = -200.0f;
+            o->oFaceAngleRoll = 0;
+            o->oMrBlizzardDizziness = 0.0f;
+            o->oMrBlizzardChangeInDizziness = 0.0f; 
+            o->oForwardVel = 0.0f;               
+            o->oVelY = 0.0f;                     
+            o->oBlizzardHitTimer = 0;
+            cur_obj_become_tangible();
+        }
+    }
+}
+
 /**
  * Mr. Blizzard update function.
  */
@@ -367,6 +437,7 @@ void bhv_mr_blizzard_update(void) {
             mr_blizzard_act_jump();
             break;
     }
+        check_mr_blizzard_trip_kick();
 
     // Set roll angle equal to dizziness, making Mr. Blizzard
     // slowly fall over.
