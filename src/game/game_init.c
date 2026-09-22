@@ -104,7 +104,7 @@ void init_rdp(void) {
     gDPSetColorDither(gDisplayListHead++, G_CD_MAGICSQ);
     gDPSetCycleType(gDisplayListHead++, G_CYC_FILL);
 
-#if defined(VERSION_SH) || defined(VERSION_CN)
+#if defined(VERSION_SH) || defined(VERSION_CN) || defined(VERSION_US)
     gDPSetAlphaDither(gDisplayListHead++, G_AD_PATTERN);
 #endif
     gDPPipeSync(gDisplayListHead++);

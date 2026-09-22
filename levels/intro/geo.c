@@ -53,9 +53,7 @@ const GeoLayout intro_geo_mario_head_regular[] = {
             GEO_NODE_ORTHO(100),
             GEO_OPEN_NODE(),
                 GEO_ASM(0, geo_intro_regular_backdrop),
-#if defined(VERSION_SH) || defined(VERSION_CN)
                 GEO_ASM(0, geo_intro_face_easter_egg),
-#endif
             GEO_CLOSE_NODE(),
         GEO_CLOSE_NODE(),
         GEO_ZBUFFER(1),
@@ -84,9 +82,7 @@ const GeoLayout intro_geo_mario_head_dizzy[] = {
             GEO_NODE_ORTHO(100),
             GEO_OPEN_NODE(),
                 GEO_ASM(0, geo_intro_gameover_backdrop),
-#if defined(VERSION_SH) || defined(VERSION_CN)
                 GEO_ASM(0, geo_intro_face_easter_egg),
-#endif
             GEO_CLOSE_NODE(),
         GEO_CLOSE_NODE(),
         GEO_ZBUFFER(1),

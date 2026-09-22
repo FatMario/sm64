@@ -27,9 +27,10 @@ struct GraphNodeMore {
 };
 
 // intro geo bss
-#if defined(VERSION_SH) || defined(VERSION_CN)
+#if defined(VERSION_SH) || defined(VERSION_CN) || defined(VERSION_US)
 static u16 *sFramebuffers[3];
 #endif
+
 static s32 sGameOverFrameCounter;
 static s32 sGameOverTableIndex;
 static s16 sIntroFrameCounter;
@@ -272,11 +273,12 @@ Gfx *geo_intro_gameover_backdrop(s32 state, struct GraphNode *node, UNUSED void 
     return dl;
 }
 
-#if defined(VERSION_SH) || defined(VERSION_CN)
-
 extern Gfx title_screen_bg_dl_0A0065E8[];
 extern Gfx title_screen_bg_dl_0A006618[];
+
+#if defined(VERSION_SH) || defined(VERSION_CN) || defined(VERSION_US)
 extern Gfx title_screen_bg_dl_0A007548[];
+#endif
 
 // Data
 s8 sFaceVisible[] = {
@@ -414,8 +416,8 @@ u16 *intro_sample_framebuffer(s32 imageW, s32 imageH, s32 sampleW, s32 sampleH) 
 
     s32 xOffset = 120;
     s32 yOffset = 80;
-
     fb = sFramebuffers[sRenderingFramebuffer];
+
     image = alloc_display_list(imageW * imageH * sizeof(u16));
 
     if (image == NULL) {
@@ -472,7 +474,7 @@ Gfx *geo_intro_face_easter_egg(s32 state, struct GraphNode *node, UNUSED void *c
         sFramebuffers[0] = gFramebuffer0;
         sFramebuffers[1] = gFramebuffer1;
         sFramebuffers[2] = gFramebuffer2;
-
+        
         for (i = 0; i < 48; i++) {
             sFaceVisible[i] = 0;
         }
@@ -502,6 +504,9 @@ Gfx *geo_intro_face_easter_egg(s32 state, struct GraphNode *node, UNUSED void *c
 
     return dl;
 }
+
+
+#if defined(VERSION_SH) || defined(VERSION_CN) || defined(VERSION_US)
 
 Gfx *geo_intro_rumble_pak_graphic(s32 state, struct GraphNode *node, UNUSED void *context) {
     struct GraphNodeGenerated *genNode = (struct GraphNodeGenerated *)node;

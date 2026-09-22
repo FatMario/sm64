@@ -169,7 +169,6 @@ const Texture *const game_over_texture_table[] = {
 
 UNUSED static const u64 title_screen_bg_unused_0 = 0;
 
-#if defined(VERSION_SH) || defined(VERSION_CN)
 const Gfx title_screen_bg_dl_0A0065E8[] = {
     gsDPPipeSync(),
     gsDPSetCycleType(G_CYC_COPY),
@@ -187,6 +186,8 @@ const Gfx title_screen_bg_dl_0A006618[] = {
     gsDPSetRenderMode(G_RM_AA_ZB_OPA_SURF, G_RM_AA_ZB_OPA_SURF2),
     gsSPEndDisplayList(),
 };
+
+#if defined(VERSION_SH) || defined(VERSION_CN) || defined(VERSION_US)
 
 ALIGNED8 static const u8 title_texture_rumble_pak[] = {
 #include "textures/title_screen_bg/title_screen_bg.06648.rgba16.inc.c"
