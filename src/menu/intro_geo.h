@@ -15,7 +15,7 @@ Gfx *geo_intro_gameover_backdrop(s32 sp40, struct GraphNode *sp44, UNUSED void *
 
 Gfx *geo_intro_face_easter_egg(s32 state, struct GraphNode *node, UNUSED void *context);
 
-#if defined(VERSION_SH) || defined(VERSION_CN)
+#if defined(VERSION_SH) || defined(VERSION_CN) || defined(VERSION_US)
 Gfx *geo_intro_rumble_pak_graphic(s32 state, struct GraphNode *node, UNUSED void *context);
 #endif
 
