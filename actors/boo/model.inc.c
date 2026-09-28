@@ -16,6 +16,14 @@ ALIGNED8 static const Texture boo_seg5_texture_0500AB40[] = {
 #include "actors/boo/boo_mouth.rgba16.inc.c"
 };
 
+ALIGNED8 static const Texture boo_seg5_texture_beta_eyes[] = {
+#include "actors/boo/boo_eyes_beta.rgba16.inc.c"
+};
+
+ALIGNED8 static const Texture boo_seg5_texture_beta_mouth[] = {
+#include "actors/boo/boo_mouth_beta.rgba16.inc.c"
+};
+
 // 0x0500B340
 static const Vtx boo_seg5_vertex_0500B340[] = {
     {{{     0,   -117,    131}, 0, {   458,    990}, {0x00, 0x9d, 0x4e, 0x9e}}},
@@ -344,6 +352,55 @@ const Gfx boo_seg5_dl_0500C1B0[] = {
     gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 16, 0, G_TX_RENDERTILE, 0, G_TX_CLAMP, 5, G_TX_NOLOD, G_TX_CLAMP, 6, G_TX_NOLOD),
     gsDPSetTileSize(0, 0, 0, (64 - 1) << G_TEXTURE_IMAGE_FRAC, (32 - 1) << G_TEXTURE_IMAGE_FRAC),
     gsSPDisplayList(boo_seg5_dl_0500BF48),
+    gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_OFF),
+    gsDPPipeSync(),
+    gsDPSetCombineMode(G_CC_SHADEFADEA, G_CC_SHADEFADEA),
+    gsSPDisplayList(boo_seg5_dl_0500BFA0),
+    gsDPPipeSync(),
+    gsDPSetCombineMode(G_CC_SHADE, G_CC_SHADE),
+    gsDPSetEnvColor(255, 255, 255, 255),
+    gsSPEndDisplayList(),
+};
+
+const Gfx boo_seg5_dl_beta_mouth[] = {
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, boo_seg5_texture_beta_mouth),
+    gsDPTileSync(),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, G_TX_WRAP | G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD, G_TX_WRAP | G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD),
+    gsDPLoadSync(),
+    gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 32 * 32 - 1, CALC_DXT(32, G_IM_SIZ_16b_BYTES)),
+    gsSPLight(&boo_seg5_lights_05009B28.l, 1),
+    gsSPLight(&boo_seg5_lights_05009B28.a, 2),
+    gsSPVertex(boo_seg5_vertex_0500B340, 12, 0),
+    gsSP2Triangles( 0, 1, 2, 0x0, 3, 4, 5, 0x0),
+    gsSP2Triangles( 6, 7, 8, 0x0, 9, 10, 11, 0x0),
+    gsSPEndDisplayList(),
+};
+
+const Gfx boo_seg5_dl_beta_eyes[] = {
+    gsDPSetTextureImage(G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, boo_seg5_texture_beta_eyes),
+    gsDPTileSync(),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE, 0, G_TX_WRAP | G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD, G_TX_WRAP | G_TX_NOMIRROR, G_TX_NOMASK, G_TX_NOLOD),
+    gsDPLoadSync(),
+    gsDPLoadBlock(G_TX_LOADTILE, 0, 0, 64 * 32 - 1, CALC_DXT(64, G_IM_SIZ_16b_BYTES)),
+    gsSPVertex(boo_seg5_vertex_0500B400, 12, 0),
+    gsSP2Triangles( 0, 1, 2, 0x0, 3, 4, 5, 0x0),
+    gsSP2Triangles( 6, 7, 8, 0x0, 9, 10, 11, 0x0),
+    gsSPEndDisplayList(),
+};
+
+const Gfx boo_seg5_dl_beta_master[] = {
+    gsDPPipeSync(),
+    gsDPSetCombineMode(G_CC_BLENDRGBFADEA, G_CC_BLENDRGBFADEA),
+    gsSPNumLights(NUMLIGHTS_1),
+    gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON),
+    gsDPTileSync(),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 8, 0, G_TX_RENDERTILE, 0, G_TX_CLAMP, 5, G_TX_NOLOD, G_TX_CLAMP, 5, G_TX_NOLOD),
+    gsDPSetTileSize(0, 0, 0, (32 - 1) << G_TEXTURE_IMAGE_FRAC, (32 - 1) << G_TEXTURE_IMAGE_FRAC),
+    gsSPDisplayList(boo_seg5_dl_beta_mouth),
+    gsDPTileSync(),
+    gsDPSetTile(G_IM_FMT_RGBA, G_IM_SIZ_16b, 16, 0, G_TX_RENDERTILE, 0, G_TX_CLAMP, 5, G_TX_NOLOD, G_TX_CLAMP, 6, G_TX_NOLOD),
+    gsDPSetTileSize(0, 0, 0, (64 - 1) << G_TEXTURE_IMAGE_FRAC, (32 - 1) << G_TEXTURE_IMAGE_FRAC),
+    gsSPDisplayList(boo_seg5_dl_beta_eyes),
     gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_OFF),
     gsDPPipeSync(),
     gsDPSetCombineMode(G_CC_SHADEFADEA, G_CC_SHADEFADEA),

@@ -2911,3 +2911,23 @@ void cur_obj_spawn_star_at_y_offset(f32 targetX, f32 targetY, f32 targetZ, f32 o
     o->oPosY = objectPosY;
 }
 #endif
+
+Gfx *geo_switch_boo_texture(s32 callContext, struct GraphNode *node, UNUSED void *context) {
+    struct GraphNodeSwitchCase *switchCase = (struct GraphNodeSwitchCase *) node;
+    struct Object *obj = (struct Object *) gCurGraphNodeObject;
+
+    if (callContext == GEO_CONTEXT_RENDER) {
+        if (gCurGraphNodeHeldObject != NULL) {
+            obj = (struct Object *) gCurGraphNodeHeldObject->objNode;
+        }
+        
+        if (obj->behavior == segmented_to_virtual(bhvGhostHuntBoo) || 
+            obj->behavior == segmented_to_virtual(bhvMerryGoRoundBoo) ||
+            obj->behavior == segmented_to_virtual(bhvBoo)) {
+            switchCase->selectedCase = 1; // Load Beta
+        } else {
+            switchCase->selectedCase = 0; // Load Retail
+        }
+    }
+    return NULL;
+}
