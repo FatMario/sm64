@@ -21,6 +21,7 @@ void bhv_unused_poundable_platform(void) {
             spawn_mist_particles();
             spawn_triangle_break_particles(20, MODEL_SL_CRACKED_ICE_CHUNK, 3.0f, 0);
             o->oAction++;
+            create_sound_spawner(SOUND_GENERAL_BREAK_BOX);
         }
     } else if (o->oTimer > 7) {
         obj_mark_for_deletion(o);
